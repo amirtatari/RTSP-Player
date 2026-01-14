@@ -1,5 +1,4 @@
-#ifndef PLAYERWIDGET_HPP
-#define PLAYERWIDGET_HPP
+#pragma once
 
 #include <gst/gst.h>
 #include <gst/video/videooverlay.h>
@@ -55,5 +54,3 @@ public:
     // changes the size of the widget
     void changeSize(int x, int y, int width, int height);
 };
-
-#endif // PLAYERWIDGET_HPP

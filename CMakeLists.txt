@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 project(player VERSION 0.1.0)
 
@@ -20,15 +20,21 @@ pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-video-1.0)
 include_directories(
     ${GSTREAMER_INCLUDE_DIRS}
     ${Qt6Widgets_INCLUDE_DIRS}
-    playerWidget
+    backend/gstreamer
+    backend/stateMachine
+    ui
+    ui/widgets/videoWidget
+    utils/logger
 )
 
 set(PROJECT_SOURCES
     main.cpp
-    mainwindow.cpp
-    mainwindow.hpp
-    mainwindow.ui
-    playerWidget/playerWidget.cpp
+    ui/mainwindow.cpp
+    ui/mainwindow.ui
+    ui/widgets/videoWidget/videoWidget.cpp
+    backend/gstreamer/gstPlayer.cpp
+    backend/stateMachine/stateMachine.cpp
+    utils/logger/logger.cpp
 )
 
 add_executable(${PROJECT_NAME} 

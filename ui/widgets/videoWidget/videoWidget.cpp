@@ -1,4 +1,4 @@
-#include "playerWidget.hpp"
+#include "videoWidget.hpp"
 #include <stdexcept>
 
 void PlayerWidget::stop()

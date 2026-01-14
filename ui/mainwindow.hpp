@@ -1,12 +1,11 @@
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#pragma once
 
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <QFrame> 
 
-#include "playerWidget/playerWidget.hpp"
+#include "widgets/videoWidget/videoWidget.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -43,4 +42,3 @@ public:
     ~MainWindow(); 
 
 };
-#endif // MAINWINDOW_HPP
