@@ -1,9 +1,11 @@
 #include "mainwindow.hpp"
 
 #include <QApplication>
+#include <gst/gst.h>
 
 int main(int argc, char *argv[])
 {
+    gst_init(&argc, &argv);
     try
     {
         QApplication a(argc, argv);
@@ -12,9 +14,9 @@ int main(int argc, char *argv[])
         return a.exec();
     } 
     catch(const std::exception& exp)
-    {
-        std::cerr << "main: ERROR: " << exp.what() << '\n';
+    {   
         return -1;
     }
+    gst_deinit();
     return 0;
 }
