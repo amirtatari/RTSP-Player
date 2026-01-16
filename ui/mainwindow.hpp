@@ -5,7 +5,9 @@
 #include <QVBoxLayout>
 #include <QFrame> 
 
-#include "widgets/videoWidget/videoWidget.hpp"
+#include "widgets/videoWidget.hpp"
+#include "widgets/textBox.hpp"
+#include "../backend/stateMachine/stateMachine.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -14,9 +16,13 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    
     Ui::MainWindow *ui;
-    PlayerWidget* m_sWidget;
     QLineEdit* m_urlInput;
+
+    VideoWidget m_videoWidget; 
+    TextBoxWidget m_textBox;
+    StateMachine m_stateMachine;
 
     // setup Ui components for main ui page
     void setupMainPageUi();
@@ -41,4 +47,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow(); 
 
+    VideoWidget& getVideoWidget() { return m_videoWidget; }
+    QString getUrl() const;
 };

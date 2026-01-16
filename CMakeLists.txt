@@ -23,7 +23,7 @@ include_directories(
     backend/gstreamer
     backend/stateMachine
     ui
-    ui/widgets/videoWidget
+    ui/widgets
     utils/logger
 )
 
@@ -31,9 +31,11 @@ set(PROJECT_SOURCES
     main.cpp
     ui/mainwindow.cpp
     ui/mainwindow.ui
-    ui/widgets/videoWidget/videoWidget.cpp
+    ui/widgets/videoWidget.cpp
+    ui/widgets/textBox.cpp
     backend/gstreamer/gstPlayer.cpp
     backend/stateMachine/stateMachine.cpp
+    backend/stateMachine/state.cpp
     utils/logger/logger.cpp
 )
 
