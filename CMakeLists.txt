@@ -9,26 +9,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(PkgConfig REQUIRED)
-
-# qt6 libs
-find_package(Qt6 COMPONENTS Widgets REQUIRED)
-
-# gstreamer libs
-pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-video-1.0)
-
-include_directories(
-    ${GSTREAMER_INCLUDE_DIRS}
-    ${Qt6Widgets_INCLUDE_DIRS}
-    backend/gstreamer
-    backend/stateMachine
-    ui
-    ui/widgets
-    utils/logger
-)
+# Modular Dependencies
+include(libs/qt/qt.cmake)
+include(libs/gst/gstreamer.cmake)
 
 set(PROJECT_SOURCES
-    main.cpp
     ui/mainwindow.cpp
     ui/mainwindow.ui
     ui/widgets/videoWidget.cpp
@@ -39,14 +24,26 @@ set(PROJECT_SOURCES
     utils/logger/logger.cpp
 )
 
+# Make paths absolute so they can be reused in subdirectories (like tests)
+list(TRANSFORM PROJECT_SOURCES PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+
 add_executable(${PROJECT_NAME} 
+    main.cpp
     ${PROJECT_SOURCES}
 )
 
-
-target_link_libraries(${PROJECT_NAME}
-    ${GSTREAMER_LIBRARIES}
-    Qt6::Widgets
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    ProjectQt
+    ProjectGst
 )
 
-add_definitions(${GSTREAMER_CFLAGS_OTHER})
+target_include_directories(${PROJECT_NAME} PRIVATE
+    backend/gstreamer
+    backend/stateMachine
+    ui
+    ui/widgets
+    utils/logger
+)
+
+enable_testing()
+add_subdirectory(tests)
