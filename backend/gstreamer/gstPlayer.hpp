@@ -5,6 +5,7 @@
 #include <gst/gst.h>
 #include <gst/video/videooverlay.h>
 #include <QObject>
+#include <QWidget>
 #include <QString>
 
 struct GstObjectDeleter 
@@ -42,14 +43,16 @@ class GstPlayer : public QObject
   std::unique_ptr<GstBus, GstObjectDeleter> m_bus;
   std::unique_ptr<GstMessage, GstMessageDeleter> m_message;
   std::unique_ptr<GError, GErrorDeleter> m_error;
+  WId m_windowId{0};
 
   static gboolean busCallback(GstBus* bus, GstMessage* msg, gpointer data);
+  static GstBusSyncReply syncBusCallback(GstBus* bus, GstMessage* msg, gpointer data);
 
 public:
   explicit GstPlayer(QObject* parent = nullptr);
   ~GstPlayer();
 
-  bool playStream(const std::string& pipeline, unsigned int windowId);
+  bool playStream(const std::string& pipeline, WId windowId);
   void stop();
   bool init();
 

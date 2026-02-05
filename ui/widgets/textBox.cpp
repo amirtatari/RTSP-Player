@@ -1,5 +1,5 @@
 #include "textBox.hpp"
-#include <QDateTime>
+#include <QCoreApplication>
 
 TextBoxWidget::TextBoxWidget(QWidget* parent) 
   : QTextEdit{parent} 
@@ -11,6 +11,6 @@ TextBoxWidget::TextBoxWidget(QWidget* parent)
 
 void TextBoxWidget::appendMessage(const QString& message)
 {
-  const QString timestamp {QDateTime::currentDateTime().toString("hh:mm:ss")};
-  append(QString("[%1] %2").arg(timestamp, message));
+  append(QString("%1").arg(message));
+  QCoreApplication::processEvents();
 }

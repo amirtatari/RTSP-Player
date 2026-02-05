@@ -65,6 +65,9 @@ void MainWindow::setupMainPageUi()
 
     // add the text box for logs
     v_layout->addWidget(&m_textBox);
+
+    // adjust window size to fit contents
+    adjustSize();
 }
 
 void MainWindow::setupTextInputUi(QVBoxLayout *vLayout)
@@ -78,7 +81,7 @@ void MainWindow::setupTextInputUi(QVBoxLayout *vLayout)
 
 QFrame *MainWindow::drawHorizontalLine()
 {
-    QFrame *line = new QFrame(this);
+    QFrame *line {new QFrame(this)};
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
     return line;
@@ -87,23 +90,25 @@ QFrame *MainWindow::drawHorizontalLine()
 void MainWindow::setupButtonsUi(QVBoxLayout *vLayout)
 {
     // create buttons
-    QPushButton *start_btn = new QPushButton("Play Stream", this);
-    QPushButton *stop_btn = new QPushButton("Stop Stream", this);
-    QPushButton *quit_btn = new QPushButton("Quit", this);
+    QPushButton *start_btn {new QPushButton("Play Stream", this)};
+    QPushButton *stop_btn {new QPushButton("Stop Stream", this)};
+    QPushButton *quit_btn {new QPushButton("Quit", this)};
     start_btn->setFixedSize(QSize(120, 30));
     stop_btn->setFixedSize(QSize(120, 30));
     quit_btn->setFixedSize(QSize(60, 30));
 
     // add the buttons to horizontal layout
-    QHBoxLayout *h_layout = new QHBoxLayout{};
+    QHBoxLayout *h_layout {new QHBoxLayout{}};
     h_layout->addWidget(start_btn);
     h_layout->addWidget(stop_btn);
     h_layout->addWidget(quit_btn);
     vLayout->addLayout(h_layout);
 
     // connect released events of buttons to corresponding slots
-    connect(start_btn, &QPushButton::released, this, &MainWindow::slotStartStream);
-    connect(stop_btn, &QPushButton::released, this, &MainWindow::slotStopStream);
+    connect(start_btn, &QPushButton::released, 
+            this, &MainWindow::slotStartStream);
+    connect(stop_btn, &QPushButton::released, 
+            this, &MainWindow::slotStopStream);
     connect(quit_btn, &QPushButton::clicked, &QApplication::quit);
 }
 

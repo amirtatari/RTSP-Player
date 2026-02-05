@@ -21,18 +21,24 @@ void GstPlayer::stop()
 
   // memory cleanup
   if (m_bus)
+  {
+    gst_bus_set_sync_handler(m_bus.get(), nullptr, nullptr, nullptr);
     gst_bus_remove_watch(m_bus.get());
+  }
   
   m_playerElem.reset();
   m_bus.reset();
   m_error.reset();
   m_message.reset();
+  m_windowId = 0;
 }
 
-bool GstPlayer::playStream(const std::string& pipeline, unsigned int windowId) 
+bool GstPlayer::playStream(const std::string& pipeline, WId windowId) 
 {
   if (m_playerElem)
     stop();
+
+  m_windowId = windowId;
 
   // check the input variables
   if (pipeline.empty()) 
@@ -44,7 +50,6 @@ bool GstPlayer::playStream(const std::string& pipeline, unsigned int windowId)
   // initialize the player element using the description
   GError* err{nullptr};
   m_playerElem.reset(gst_parse_launch(pipeline.c_str(), &err));
-  
   if (err) 
   {
     const QString errorMsg {QString("Failed to parse pipeline: %1").arg(err->message)};
@@ -59,21 +64,10 @@ bool GstPlayer::playStream(const std::string& pipeline, unsigned int windowId)
     return false;
   }
 
-  // setup bus watch
+  // setup bus watch and sync handler
   m_bus.reset(gst_element_get_bus(m_playerElem.get()));
+  gst_bus_set_sync_handler(m_bus.get(), syncBusCallback, this, nullptr);
   gst_bus_add_watch(m_bus.get(), busCallback, this);
-
-  // get the sink element & set video overlay
-  std::unique_ptr<GstElement, GstObjectDeleter> videoSink{
-      gst_bin_get_by_interface(GST_BIN(m_playerElem.get()), GST_TYPE_VIDEO_OVERLAY)};
-
-  if (videoSink)
-    gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(videoSink.get()), windowId);
-  else 
-  {
-    emit errorOccurred("Could not find video sink with overlay support");
-    return false;
-  }
 
   // set player element state to playing
   GstStateChangeReturn ret{gst_element_set_state(m_playerElem.get(), GST_STATE_PLAYING)};
@@ -83,13 +77,25 @@ bool GstPlayer::playStream(const std::string& pipeline, unsigned int windowId)
     emit errorOccurred("Failed to set pipeline to PLAYING state");
     return false;
   }
-
   return true;
 }
 
 bool GstPlayer::init()
 {
   return gst_init_check(nullptr, nullptr, nullptr);
+}
+
+GstBusSyncReply GstPlayer::syncBusCallback(GstBus* bus, GstMessage* msg, gpointer data)
+{
+  if (gst_is_video_overlay_prepare_window_handle_message(msg))
+  {
+    auto* self {static_cast<GstPlayer*>(data)};
+    if (self->m_windowId != 0) 
+      gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(GST_MESSAGE_SRC(msg)), 
+                                                            self->m_windowId);
+  }
+
+  return GST_BUS_PASS;
 }
 
 gboolean GstPlayer::busCallback(GstBus* bus, GstMessage* msg, gpointer data)
