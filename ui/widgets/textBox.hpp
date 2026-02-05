@@ -1,9 +1,11 @@
 #pragma once
 
-#include <QString>
+#include <QTextEdit>
 
-class TextBoxWidget
+class TextBoxWidget : public QTextEdit
 {
+  Q_OBJECT
 public:
-  QString getText();
+  explicit TextBoxWidget(QWidget* parent = nullptr);
+  void appendMessage(const QString& message);
 };
