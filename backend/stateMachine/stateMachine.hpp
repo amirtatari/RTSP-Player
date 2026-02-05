@@ -2,7 +2,6 @@
 
 #include "state.hpp"
 
-#include <QWidget>
 #include <memory>
 
 /**
@@ -10,24 +9,30 @@
  */
 enum class Event{PLAY, STOP, IDLE};
 
+class MainWindow;
+
 /**
  * @brief manages states and events
  */
-class StateMachine : public QWidget
+class StateMachine : public QObject
 {
   Q_OBJECT
 
   std::unique_ptr<AbsState> m_state;
   MainWindow* m_windowPtr;
+  GstPlayer m_gstPlayer;
 
   /**
    * @brief gets the New State
    * @param event incoming event
    * @return std::unique_ptr<AbsState> 
    */
+
   std::unique_ptr<AbsState> getNewState(Event event);
+
 public:
-  explicit StateMachine(MainWindow* window, QWidget* parent = nullptr);
+  explicit StateMachine(MainWindow* window, QObject* parent = nullptr) noexcept;
+  GstPlayer& getPlayer() { return m_gstPlayer; }
 
 public slots:
   /**

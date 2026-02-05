@@ -14,20 +14,19 @@ inline std::string createPipeline(const std::string &url)
   return rtspsrc + latency + mimeType + rtpJitter + depay + decode + videoScale + sink;
 }
 
-void VideoPlaying::onEvent(MainWindow* window)
+void VideoPlaying::onEvent(MainWindow* window, GstPlayer& player)
 {
   const QString text{window->getUrl()};
   const std::string pipeline {createPipeline(text.toStdString())};
-
-  m_gstPlayer.playStream(pipeline, window->getVideoWidget().winId());
+  player.playStream(pipeline, window->getVideoWidget().winId());
 }
 
-void VideoStopped::onEvent(MainWindow* window)
+void VideoStopped::onEvent(MainWindow* window, GstPlayer& player)
 {
-  // TODO
+  player.stop();
 }
 
-void Idle::onEvent(MainWindow* window)
+void Idle::onEvent(MainWindow* window, GstPlayer& player)
 {
-  // TODO
+  player.stop();
 }

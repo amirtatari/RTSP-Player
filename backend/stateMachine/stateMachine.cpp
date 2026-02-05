@@ -1,7 +1,7 @@
 #include "stateMachine.hpp"
 
-StateMachine::StateMachine(MainWindow* window, QWidget* parent)
-  : QWidget{parent}
+StateMachine::StateMachine(MainWindow* window, QObject* parent) noexcept
+  : QObject{parent}
   , m_windowPtr{window}
   , m_state{std::make_unique<Idle>()}
 {}
@@ -12,7 +12,7 @@ void StateMachine::changeState(Event event)
   std::unique_ptr<AbsState> newState {getNewState(event)};
 
   // act on the event
-  newState->onEvent(m_windowPtr);
+  newState->onEvent(m_windowPtr, m_gstPlayer);
 
   // store the state
   m_state = std::move(newState);

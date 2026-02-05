@@ -6,27 +6,25 @@ class MainWindow;     // forward declaration
 
 class AbsState
 {
-protected:
-  GstPlayer m_gstPlayer;
 public:
-  virtual void onEvent(MainWindow* window) = 0;
+  virtual void onEvent(MainWindow* window, GstPlayer& player) = 0;
   virtual ~AbsState() = default;
 };
 
 class VideoPlaying : public AbsState
 {
 public:
-  void onEvent(MainWindow* window);
+  void onEvent(MainWindow* window, GstPlayer& player) override;
 };
 
 class VideoStopped : public AbsState
 {
 public:
-  void onEvent(MainWindow* window);
+  void onEvent(MainWindow* window, GstPlayer& player) override;
 };
 
 class Idle : public AbsState
 {
 public:
-  void onEvent(MainWindow* window);
+  void onEvent(MainWindow* window, GstPlayer& player) override;
 };
