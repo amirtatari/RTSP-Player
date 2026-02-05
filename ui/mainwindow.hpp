@@ -42,6 +42,11 @@ private slots:
 
     // connecting stop button released signal & stop the stream from playing
     void slotStopStream();
+
+    // handle gstreamer signals
+    void handlePlayerError(const QString& message);
+    void handlePlayerStateChange(const QString& state);
+    void handlePlayerEOS();
     
 public:
     MainWindow(QWidget *parent = nullptr);

@@ -11,11 +11,19 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
     , ui{new Ui::MainWindow}
-    , m_videoWidget{0, 0, 0, 0, "video1"}
+    , m_videoWidget{0, 0, 800, 600, "video1"}
     , m_urlInput{new QLineEdit{"", this}}
     , m_stateMachine{this, this}
 {
     ui->setupUi(this);
+
+    // connect player signals
+    connect(&m_stateMachine.getPlayer(), &GstPlayer::errorOccurred, 
+            this, &MainWindow::handlePlayerError);
+    connect(&m_stateMachine.getPlayer(), &GstPlayer::stateChanged, 
+            this, &MainWindow::handlePlayerStateChange);
+    connect(&m_stateMachine.getPlayer(), &GstPlayer::eosReached, 
+            this, &MainWindow::handlePlayerEOS);
 
     // init ui main page
     setupMainPageUi();
@@ -23,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-
     delete ui;
 }
 
@@ -55,6 +62,9 @@ void MainWindow::setupMainPageUi()
 
     // initialize buttons ui
     setupButtonsUi(v_layout);
+
+    // add the text box for logs
+    v_layout->addWidget(&m_textBox);
 }
 
 void MainWindow::setupTextInputUi(QVBoxLayout *vLayout)
@@ -105,4 +115,20 @@ void MainWindow::slotStopStream()
 void MainWindow::slotStartStream()
 {
     m_stateMachine.changeState(Event::PLAY);
+}
+
+void MainWindow::handlePlayerError(const QString& message)
+{
+    m_textBox.appendMessage("ERROR: " + message);
+}
+
+void MainWindow::handlePlayerStateChange(const QString& state)
+{
+    m_textBox.appendMessage("State changed to: " + state);
+}
+
+void MainWindow::handlePlayerEOS()
+{
+    m_textBox.appendMessage("End of Stream reached.");
+    m_stateMachine.changeState(Event::STOP);
 }
