@@ -1,5 +1,4 @@
 #include "textBox.hpp"
-#include <QCoreApplication>
 
 TextBoxWidget::TextBoxWidget(QWidget* parent) 
   : QTextEdit{parent} 
@@ -12,5 +11,4 @@ TextBoxWidget::TextBoxWidget(QWidget* parent)
 void TextBoxWidget::appendMessage(const QString& message)
 {
   append(QString("%1").arg(message));
-  QCoreApplication::processEvents();
 }
