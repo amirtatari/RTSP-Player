@@ -33,7 +33,7 @@ void GstPlayer::stop()
   m_windowId = 0;
 }
 
-bool GstPlayer::playStream(const std::string& pipeline, WId windowId) 
+bool GstPlayer::playStream(const std::string& pipeline, long long unsigned int windowId) 
 {
   if (m_playerElem)
     stop();
