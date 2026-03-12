@@ -1,6 +1,9 @@
 #include "state.hpp"
 #include "mainwindow.hpp"
 
+AbsState::AbsState() noexcept
+  : m_playerPtr{nullptr} {}
+
 inline std::string createPipeline(const std::string &url)
 {
   const std::string rtspsrc {"rtspsrc location=" + url};
@@ -17,19 +20,48 @@ inline std::string createPipeline(const std::string &url)
           decode + videoScale + sink;
 }
 
-void VideoPlaying::onEvent(MainWindow* window, GstPlayer& player)
+std::unique_ptr<AbsState> VideoPlaying::getNextState(Event event)
+{
+  // TODO 
+  return nullptr;
+}
+
+std::unique_ptr<AbsState> VideoStopped::getNextState(Event event)
+{
+  // TODO 
+  return nullptr;
+}
+
+std::unique_ptr<AbsState> Idle::getNextState(Event event)
+{
+  switch(event)
+  {
+    case Event::PLAYING:
+      return std::make_unique<VideoPlaying>();
+    case Event::STOP:
+      return std::make_unique<VideoStopped>();
+    default:
+      return std::make_unique<Idle>();
+  }
+  // TODO 
+  return nullptr;
+}
+
+void VideoPlaying::onEvent(MainWindow* window)
 {
   const QString text{window->getUrl()};
   const std::string pipeline {createPipeline(text.toStdString())};
-  if (!player.playStream(pipeline, window->getVideoWidget().winId()));
+  m_playerPtr.reset();
+  m_playerPtr = std::make_unique<GstPlayer>(pipeline, window->getVideoWidget().winId());
+  bool res {m_playerPtr->playStream()};
 }
 
-void VideoStopped::onEvent(MainWindow* window, GstPlayer& player)
+void VideoStopped::onEvent(MainWindow* window)
 {
-  player.stop();
+  m_playerPtr->stop();
 }
 
-void Idle::onEvent(MainWindow* window, GstPlayer& player)
+void Idle::onEvent(MainWindow* window)
 {
   //player.stop();
 }
