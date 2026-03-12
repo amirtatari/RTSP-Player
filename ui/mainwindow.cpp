@@ -13,17 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui{new Ui::MainWindow}
     , m_videoWidget{0, 0, 800, 600, "video1"}
     , m_urlInput{new QLineEdit{"", this}}
-    , m_stateMachine{this, this}
 {
     ui->setupUi(this);
-
-    // connect player signals
-    connect(&m_stateMachine.getPlayer(), &GstPlayer::errorOccurred, 
-            this, &MainWindow::handlePlayerError);
-    connect(&m_stateMachine.getPlayer(), &GstPlayer::stateChanged, 
-            this, &MainWindow::handlePlayerStateChange);
-    connect(&m_stateMachine.getPlayer(), &GstPlayer::eosReached, 
-            this, &MainWindow::handlePlayerEOS);
 
     // init ui main page
     setupMainPageUi();
@@ -114,12 +105,12 @@ void MainWindow::setupButtonsUi(QVBoxLayout *vLayout)
 
 void MainWindow::slotStopStream()
 {
-    m_stateMachine.changeState(Event::STOP);
-}
+    // TODO
+}   
 
 void MainWindow::slotStartStream()
 {
-    m_stateMachine.changeState(Event::PLAY);
+    // TODO
 }
 
 void MainWindow::handlePlayerError(const QString& message)
@@ -135,5 +126,4 @@ void MainWindow::handlePlayerStateChange(const QString& state)
 void MainWindow::handlePlayerEOS()
 {
     m_textBox.appendMessage("End of Stream reached.");
-    m_stateMachine.changeState(Event::STOP);
 }

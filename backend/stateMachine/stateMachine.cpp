@@ -2,31 +2,15 @@
 
 StateMachine::StateMachine(MainWindow* window, QObject* parent) noexcept
   : QObject{parent}
-  , m_windowPtr{window}
-  , m_state{std::make_unique<Idle>()}
-{}
+  , m_currentState{std::make_unique<Idle>()}
+  , m_windowPtr{window}{}
 
-void StateMachine::changeState(Event event)
+void StateMachine::eventReceived(Event event)
 {
-  // get the new state
-  std::unique_ptr<AbsState> newState {getNewState(event)};
-
-  // act on the event
-  newState->onEvent(m_windowPtr, m_gstPlayer);
-
-  // store the state
-  m_state = std::move(newState);
-}
-
-std::unique_ptr<AbsState> StateMachine::getNewState(Event event)
-{
-  switch(event)
+  auto newState {m_currentState->getNextState(event)};
+  if (newState)
   {
-    case Event::PLAY:
-      return std::make_unique<VideoPlaying>();
-    case Event::STOP:
-      return std::make_unique<VideoStopped>();
-    default:
-      return std::make_unique<Idle>();
+    m_currentState = std::move(newState);
+    m_currentState->onEvent(m_windowPtr);
   }
 }

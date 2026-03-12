@@ -22,7 +22,6 @@ class MainWindow : public QMainWindow
 
     VideoWidget m_videoWidget; 
     TextBoxWidget m_textBox;
-    StateMachine m_stateMachine;
 
     // setup Ui components for main ui page
     void setupMainPageUi();
@@ -54,4 +53,7 @@ public:
 
     VideoWidget& getVideoWidget() { return m_videoWidget; }
     QString getUrl() const;
+
+signals:
+    void sendEvent(Event event);
 };

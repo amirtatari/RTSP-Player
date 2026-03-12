@@ -1,4 +1,5 @@
 #include "mainwindow.hpp"
+#include "backend/stateMachine/stateMachine.hpp"
 
 #include <QApplication>
 #include <gst/gst.h>
@@ -10,10 +11,17 @@ int main(int argc, char *argv[])
     gst_init(&argc, &argv);
     try
     {
-        QApplication a(argc, argv);
-        MainWindow w;
-        w.show();
-        return a.exec();
+        QApplication app(argc, argv);
+
+        MainWindow mainWindow;
+        
+        // create state machine and connect the signal and slots
+        StateMachine sm {&mainWindow, &app};
+        QObject::connect(&mainWindow, &MainWindow::sendEvent, 
+                        &sm, &StateMachine::eventReceived);
+
+        mainWindow.show();
+        return app.exec();
     } 
     catch(const std::exception& exp)
     {   
