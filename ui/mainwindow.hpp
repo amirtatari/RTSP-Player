@@ -34,18 +34,13 @@ class MainWindow : public QMainWindow
 
     // draw a horizontal line
     QFrame* drawHorizontalLine();
-
 private slots:
-    // connecting start button released signal & play the stream in the widget
     void slotStartStream();
-
-    // connecting stop button released signal & stop the stream from playing
     void slotStopStream();
 
+public slots:
     // handle gstreamer signals
-    void handlePlayerError(const QString& message);
-    void handlePlayerStateChange(const QString& state);
-    void handlePlayerEOS();
+    void handleMessage(const QString& message);
     
 public:
     MainWindow(QWidget *parent = nullptr);

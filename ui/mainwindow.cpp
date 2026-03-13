@@ -11,8 +11,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
     , ui{new Ui::MainWindow}
-    , m_videoWidget{0, 0, 800, 600, "video1"}
     , m_urlInput{new QLineEdit{"", this}}
+    , m_videoWidget{800, 600, "video1"}
 {
     ui->setupUi(this);
 
@@ -103,27 +103,17 @@ void MainWindow::setupButtonsUi(QVBoxLayout *vLayout)
     connect(quit_btn, &QPushButton::clicked, &QApplication::quit);
 }
 
-void MainWindow::slotStopStream()
+void MainWindow::handleMessage(const QString& message)
 {
-    // TODO
-}   
+    m_textBox.appendMessage(message);
+}
 
 void MainWindow::slotStartStream()
 {
-    // TODO
+    emit sendEvent(Event::PLAYING);
 }
 
-void MainWindow::handlePlayerError(const QString& message)
+void MainWindow::slotStopStream()
 {
-    m_textBox.appendMessage("ERROR: " + message);
-}
-
-void MainWindow::handlePlayerStateChange(const QString& state)
-{
-    m_textBox.appendMessage("State changed to: " + state);
-}
-
-void MainWindow::handlePlayerEOS()
-{
-    m_textBox.appendMessage("End of Stream reached.");
+    emit sendEvent(Event::STOP);
 }
