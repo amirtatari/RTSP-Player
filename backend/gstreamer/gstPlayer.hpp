@@ -6,6 +6,8 @@
 #include <gst/video/videooverlay.h>
 #include <QObject>
 
+class MainWindow;
+
 struct GstObjectDeleter 
 {
   void operator()(gpointer ptr) const 
@@ -15,47 +17,27 @@ struct GstObjectDeleter
   }
 };
 
-struct GErrorDeleter 
-{
-  void operator()(GError* ptr) const 
-  {
-    if (ptr)
-      g_error_free(ptr);
-  }
-};
-
-struct GstMessageDeleter 
-{
-  void operator()(GstMessage* ptr) const 
-  {
-    if (ptr)
-      gst_message_unref(ptr);
-  }
-};
-
 class GstPlayer : public QObject
 {
   Q_OBJECT
-
+  const std::string m_pipeline; 
   std::unique_ptr<GstElement, GstObjectDeleter> m_playerElem;
+  std::unique_ptr<GstElement, GstObjectDeleter> m_sinkElem;
   std::unique_ptr<GstBus, GstObjectDeleter> m_bus;
-  std::unique_ptr<GstMessage, GstMessageDeleter> m_message;
-  std::unique_ptr<GError, GErrorDeleter> m_error;
-  long long unsigned int m_windowId{0u};
+
+  long long unsigned int m_windowId;
 
   static gboolean busCallback(GstBus* bus, GstMessage* msg, gpointer data);
-  static GstBusSyncReply syncBusCallback(GstBus* bus, GstMessage* msg, gpointer data);
 
 public:
-  explicit GstPlayer(QObject* parent = nullptr);
+  explicit GstPlayer(const std::string& pipeline, long long unsigned int windowId, 
+                    MainWindow* mwptr,  
+                    QObject* parent = nullptr) noexcept;
   ~GstPlayer();
 
-  bool playStream(const std::string& pipeline, long long unsigned int windowId);
+  bool playStream();
   void stop();
-  bool init();
 
 signals:
-  void errorOccurred(const QString& message);
-  void stateChanged(const QString& state);
-  void eosReached();
+  void sendMessage(const QString& message);
 };
