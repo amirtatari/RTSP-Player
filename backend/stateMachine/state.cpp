@@ -22,13 +22,25 @@ inline std::string createPipeline(const std::string &url)
 
 std::unique_ptr<AbsState> VideoPlaying::getNextState(Event event)
 {
-  // TODO 
+  switch (event)
+  {
+    case Event::STOP:
+      return std::make_unique<VideoStopped>();
+    default:
+      break;
+  }
   return nullptr;
 }
 
 std::unique_ptr<AbsState> VideoStopped::getNextState(Event event)
 {
-  // TODO 
+  switch (event)
+  {
+    case Event::PLAYING:
+      return std::make_unique<VideoPlaying>();
+    default:
+      break;
+  }
   return nullptr;
 }
 
@@ -41,9 +53,8 @@ std::unique_ptr<AbsState> Idle::getNextState(Event event)
     case Event::STOP:
       return std::make_unique<VideoStopped>();
     default:
-      return std::make_unique<Idle>();
+      break;
   }
-  // TODO 
   return nullptr;
 }
 
@@ -52,16 +63,21 @@ void VideoPlaying::onEvent(MainWindow* window)
   const QString text{window->getUrl()};
   const std::string pipeline {createPipeline(text.toStdString())};
   m_playerPtr.reset();
-  m_playerPtr = std::make_unique<GstPlayer>(pipeline, window->getVideoWidget().winId());
-  bool res {m_playerPtr->playStream()};
+  m_playerPtr = std::make_unique<GstPlayer>(pipeline, window->getVideoWidget().winId(), window);
+  if (m_playerPtr->playStream())
+  {
+    // TODO
+  }
+    
 }
 
 void VideoStopped::onEvent(MainWindow* window)
 {
   m_playerPtr->stop();
+  window->handleMessage("Stream Stopped.");
 }
 
 void Idle::onEvent(MainWindow* window)
 {
-  //player.stop();
+  window->handleMessage("Idle State.");
 }
