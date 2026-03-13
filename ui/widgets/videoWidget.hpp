@@ -10,7 +10,7 @@ class VideoWidget : public QWidget
 
 public:
     // CTOR
-    explicit VideoWidget(int x, int y, int width, int height, 
+    explicit VideoWidget(int width, int height, 
                         const QString &name, QWidget *parentPtr = nullptr);
 
     VideoWidget(const VideoWidget &rhs) = delete;

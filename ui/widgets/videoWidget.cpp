@@ -1,6 +1,6 @@
 #include "videoWidget.hpp"
 
-VideoWidget::VideoWidget(int x, int y, int width, int height, 
+VideoWidget::VideoWidget(int width, int height, 
                             const QString &name, QWidget *parentPtr)
     : QWidget{parentPtr}
     {
